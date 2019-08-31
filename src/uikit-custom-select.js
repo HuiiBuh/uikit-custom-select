@@ -254,27 +254,26 @@ class customSelectElement {
 
         return function (evt) {
 
-            if (evt !== undefined && evt.type === "keypress" && evt.code !== "Enter" && evt.code !== "Escape") {
+            if (evt !== undefined && evt.type === "keypress" && evt.code !== "Enter" ||
+                evt !== undefined && evt.code === "Enter" && evt.timeStamp === self.eventTimeStamp) {
                 return
             }
 
             if (self.isVisible === true) {
-
                 document.removeEventListener("click", self.closeFunction);
-                document.removeEventListener("keypress", self.closeFunction);
+                document.removeEventListener("keydown", self.closeFunction);
 
                 self.optionCollection.classList.add("select-hide");
                 self.isVisible = false;
 
             } else {
                 // Set the position of the box
-
                 self.optionCollection.style.left = getComputedStyle(self.rootElement).paddingLeft;
                 self.optionCollection.style.right = getComputedStyle(self.rootElement).paddingRight;
 
                 if (evt !== undefined) {
-                    evt.stopImmediatePropagation();
-                    evt.stopPropagation();
+                    // Set the eventTimeStamp of the newest event
+                    self.eventTimeStamp = evt.timeStamp;
                 }
 
                 let paddingBottom = getComputedStyle(self.rootElement).paddingBottom.replace(/[g-x]/g, "");
@@ -284,7 +283,7 @@ class customSelectElement {
                 self.isVisible = true;
 
                 document.addEventListener("click", self.closeFunction);
-                document.addEventListener("keypress", self.closeFunction);
+                document.addEventListener("keydown", self.closeFunction);
             }
         }
     }
@@ -329,7 +328,6 @@ class customSelectElement {
             }
             evt.currentTarget.setAttribute("selected", "");
 
-
             self.currentValue = evt.currentTarget.getAttribute("value");
             self.rootElement.getElementsByClassName("button-text")[0].innerText = self.valueToText(self.currentValue);
             self.rootElement.getElementsByTagName("select")[0].value = self.currentValue;
@@ -344,15 +342,35 @@ class customSelectElement {
      */
     closeSelect(self) {
         return function (evt) {
-            if (evt.type === "keydown" && evt.code !== "Escape" && evt.code !== "Enter") {
+
+            // If the event is no escape and the timestamp of the event was not already used
+            if (evt.timeStamp === self.eventTimeStamp) {
                 return
             }
 
-            // Check if the select button is clicked
-            if (evt.currentTarget === self.rootElement.getElementsByClassName("select-button")[0]) {
-                return
-            }
+            // If it is a key event
+            if (evt.type === "keydown") {
 
+                // If it is a different keycode than Escape and enter
+                if (evt.code !== "Escape" && evt.code !== "Enter") {
+                    return
+                }
+
+                // If the event is an enter and target of the enter is the button group let the button group handler handle things
+                if (evt.target === self.rootElement.getElementsByClassName("uk-button-group")[0] && evt.code === "Enter") {
+                    return
+                }
+
+                // If the event is a enter and the focus is on one of the options let the option handler handle things
+                if (evt.code === "Enter") {
+                    let optionList = self.optionCollection.getElementsByTagName("div");
+                    for (let i = 0; i < optionList.length; ++i) {
+                        if (evt.srcElement === optionList[i]) {
+                            return
+                        }
+                    }
+                }
+            }
             self.toggleOptionList(self)();
         }
     }
