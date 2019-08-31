@@ -22,7 +22,6 @@
 .select-button {
     border-color: #b2b2b2 !important;
     border: 1px;
-    margin-left: -1px;
     border-style: solid;
 }
 
@@ -34,14 +33,15 @@
     cursor: default !important;
 }
 
-/*Hover event for the label button*/
-.select-label-button:hover {
+/*Label button is not supposed to change states */
+.select-label-button:active, .select-label-button:hover, .select-label-button:focus {
     background-color: #b2b2b2;
+    border-color: #b2b2b2;
     color: white;
 }
 
-/* Selected select icon */
-.select-selected {
+/* Special background color for the selected option*/
+.custom-select .select-items div[selected] {
     background-color: #ececec !important
 }
 

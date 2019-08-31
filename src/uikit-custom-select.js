@@ -1,6 +1,4 @@
-// TODO show selected (selected class)
-// TODO close all selects if you open another one
-// TODO 1px left without label
+// TODO only one select open at a time
 
 /**
  * By calling this function all selects will be replaced with custom selects
@@ -60,7 +58,7 @@ function createSelectElements(settingsJson) {
 
     /**
      * Get the options and the corresponding text of one select and returns these in a json
-     * @param optionElements {list{object}} All option elements
+     * @param optionElements {list} All option elements
      * @returns {json} json[i].value json[i].valueText
      */
     function getOptionInformation(optionElements) {
@@ -150,6 +148,7 @@ class customSelectElement {
      * @param optionList The list of options with their value and text
      * @param labelContend The label text if there is one (non if not existend)
      * @param rootElement The element with the custom-select class
+     * @param two Should there be a special case for two options
      */
     constructor(defaultValue, optionList, labelContend, rootElement, two) {
         this.isVisible = false;
@@ -160,6 +159,7 @@ class customSelectElement {
         this.rootElement = rootElement;
         this.two = two;
         this.optionCollection = null;
+        this.closeFunction = this.closeSelect(this);
     }
 
     /**
@@ -171,7 +171,7 @@ class customSelectElement {
             var buttonGroup = document.createElement("div");
             buttonGroup.classList.add("uk-button-group");
             buttonGroup.setAttribute("tabindex", "0");
-            buttonGroup.addEventListener("keypress", customSelectElement.toggleOptionList(this));
+            buttonGroup.addEventListener("keypress", this.toggleOptionList(this));
 
             // Create label button
             let labelButton = document.createElement("button");
@@ -188,7 +188,7 @@ class customSelectElement {
             "uk-flex uk-flex-middle uk-flex-between");
         selectButton.setAttribute("tabindex", "-1");
         selectButton.setAttribute("value", this.defaultValue.value);
-        selectButton.addEventListener("click", customSelectElement.toggleOptionList(this));
+        selectButton.addEventListener("click", this.toggleOptionList(this));
 
         // Add the button text
         let buttonText = document.createElement("span");
@@ -208,7 +208,7 @@ class customSelectElement {
             this.rootElement.appendChild(buttonGroup)
         } else {
             selectButton.setAttribute("tabindex", "0");
-            selectButton.addEventListener("keypress", customSelectElement.toggleOptionList(this));
+            selectButton.addEventListener("keypress", this.toggleOptionList(this));
             this.rootElement.appendChild(selectButton);
         }
 
@@ -224,9 +224,14 @@ class customSelectElement {
             optionDiv.innerText = this.optionList[i].valueText;
             optionDiv.setAttribute("tabindex", "0");
 
+            if (this.optionList[i].value === this.currentValue.value) {
+                optionDiv.setAttribute("selected", "");
+            }
+
             // For the special case that there are only two elements in the select
             if (Object.keys(this.optionList).length === 2 && this.optionList[i].value === this.currentValue.value && this.two) {
                 optionDiv.style.display = "none";
+                optionDiv.setAttribute("select-hidden", "true");
             }
 
             // Add the click and keypress event listener
@@ -245,23 +250,32 @@ class customSelectElement {
      * @param self {this} object of the customSelectElement
      * @returns {Function} The function that will be executed if the event is fired
      */
-    static toggleOptionList(self) {
+    toggleOptionList(self) {
+
         return function (evt) {
-            if (evt.type === "keypress" && evt.code !== "Enter" && evt.code !== "Escape") {
+
+            if (evt !== undefined && evt.type === "keypress" && evt.code !== "Enter" && evt.code !== "Escape") {
                 return
             }
 
             if (self.isVisible === true) {
+
+                document.removeEventListener("click", self.closeFunction);
+                document.removeEventListener("keypress", self.closeFunction);
+
                 self.optionCollection.classList.add("select-hide");
                 self.isVisible = false;
 
-                evt.stopPropagation();
-                evt.stopImmediatePropagation();
-
             } else {
                 // Set the position of the box
+
                 self.optionCollection.style.left = getComputedStyle(self.rootElement).paddingLeft;
                 self.optionCollection.style.right = getComputedStyle(self.rootElement).paddingRight;
+
+                if (evt !== undefined) {
+                    evt.stopImmediatePropagation();
+                    evt.stopPropagation();
+                }
 
                 let paddingBottom = getComputedStyle(self.rootElement).paddingBottom.replace(/[g-x]/g, "");
                 self.optionCollection.style.top = self.rootElement.getBoundingClientRect().height - paddingBottom + "px";
@@ -269,11 +283,8 @@ class customSelectElement {
                 self.optionCollection.classList.remove("select-hide");
                 self.isVisible = true;
 
-                evt.stopPropagation();
-                evt.stopImmediatePropagation();
-
-                document.addEventListener("keydown", customSelectElement.closeSelect(self));
-                document.addEventListener("click", customSelectElement.closeSelect(self));
+                document.addEventListener("click", self.closeFunction);
+                document.addEventListener("keypress", self.closeFunction);
             }
         }
     }
@@ -289,30 +300,40 @@ class customSelectElement {
                 return
             }
 
+            evt.stopPropagation();
+            evt.stopImmediatePropagation();
+
+            self.toggleOptionList(self)();
+
             // Hide the not important element if there are only two selects
             if (Object.keys(self.optionList).length === 2 && self.two) {
                 let options = self.optionCollection.getElementsByTagName("div");
                 for (let i = 0; i < options.length; ++i) {
-                    if (options[i].style.display === "none") {
+                    if (options[i].getAttribute("select-hidden") === "true") {
                         options[i].style.display = "block";
+                        options[i].setAttribute("select-hidden", "false");
                     } else {
                         options[i].style.display = "none";
+                        options[i].setAttribute("select-hidden", "true");
                     }
                 }
             }
 
-            evt.stopPropagation();
-            evt.stopImmediatePropagation();
+            // Get all options
+            let options = self.optionCollection.getElementsByTagName("div");
+            for (let i = 0; i < options.length; ++i) {
+                // Find the currently selected and remove the selected class and attribute
+                if (options[i].getAttribute("selected") === "") {
+                    options[i].removeAttribute("selected");
+                }
+            }
+            evt.currentTarget.setAttribute("selected", "");
 
-            self.optionCollection.classList.add("select-hide");
+
             self.currentValue = evt.currentTarget.getAttribute("value");
-
             self.rootElement.getElementsByClassName("button-text")[0].innerText = self.valueToText(self.currentValue);
             self.rootElement.getElementsByTagName("select")[0].value = self.currentValue;
             self.rootElement.getElementsByTagName("select")[0].dispatchEvent(new Event("change"));
-
-            self.isVisible = false;
-
         }
     }
 
@@ -321,13 +342,18 @@ class customSelectElement {
      * @param self {this} object of the customSelectElement
      * @returns {Function} The function that will be executed if the event is fired
      */
-    static closeSelect(self) {
+    closeSelect(self) {
         return function (evt) {
-            if (evt.type === "keydown" && evt.code !== "Escape") {
+            if (evt.type === "keydown" && evt.code !== "Escape" && evt.code !== "Enter") {
                 return
             }
-            self.optionCollection.classList.add("select-hide");
-            self.isVisible = false;
+
+            // Check if the select button is clicked
+            if (evt.currentTarget === self.rootElement.getElementsByClassName("select-button")[0]) {
+                return
+            }
+
+            self.toggleOptionList(self)();
         }
     }
 
