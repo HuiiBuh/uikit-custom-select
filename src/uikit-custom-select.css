@@ -1,0 +1,86 @@
+/*Hide the select element and the label of it*/
+.custom-select select {
+    display: none;
+}
+
+/*Hide the label of the select */
+.custom-select label {
+    display: none;
+}
+
+/* create a padding for the select icon*/
+.select-button-icon {
+    padding-top: 4px
+}
+
+/*Positioning of the custom select*/
+.custom-select {
+    position: relative;
+}
+
+/*The main select button*/
+.select-button {
+    border-color: #b2b2b2 !important;
+    border: 1px;
+    margin-left: -1px;
+    border-style: solid;
+}
+
+/*The label button*/
+.select-label-button {
+    background-color: #b2b2b2;
+    border-color: #b2b2b2;
+    color: white;
+    cursor: default !important;
+}
+
+/*Hover event for the label button*/
+.select-label-button:hover {
+    background-color: #b2b2b2;
+    color: white;
+}
+
+/* Selected select icon */
+.select-selected {
+    background-color: #ececec !important
+}
+
+/* style the items (options), including the selected item: */
+.select-items div, .select-selected {
+    color: #000;
+    cursor: pointer;
+    border: 1px solid #b2b2b2;
+    background-color: white !important;
+    padding: 0 15px;
+    line-height: 28px;
+    font-size: .875rem;
+}
+
+/* Style items (options): */
+.select-items {
+    background-color: transparent;
+    position: absolute;
+    padding-bottom: 1rem;
+    color: #000 !important;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Hover for the select dropdown icon*/
+.select-items div:hover {
+    background-color: #f5f5f5;
+}
+
+/* Emulates a focus */
+.focus {
+    outline: -webkit-focus-ring-color auto 1px;
+}
