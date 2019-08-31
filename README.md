@@ -35,7 +35,7 @@ The label element is optional as well as the uk-padding-middle class.
         <option value="audio" selected>Audio</option>
         <option value="video">Video</option>
     </select>
-    <label for="audio-video">Format</label>
+    <label>Format</label>
 </div>
 ```
 If the value of the select changes a `change` event gets fired. This is the only event you get from the orginal select. If you want to have the value of the select just use the value of the select you created. It is not visible, but the value is always up to date.
@@ -51,4 +51,4 @@ A select with more than two options. The selected option is highlighted.
 
 Select without a label.
 
-![WithoutLabel](https://i.imgur.com/ofB7IQ9.png)
+![WithoutLabel](https://i.imgur.com/8KqQr7S.png)
