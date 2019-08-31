@@ -1,5 +1,3 @@
-// TODO only one select open at a time
-
 /**
  * By calling this function all selects will be replaced with custom selects
  * @param settingsJson {json} The time that should be waited before editing the width of elements
@@ -18,6 +16,10 @@ function createSelectElements(settingsJson) {
 
     if (settingsJson.two === undefined) {
         settingsJson.two = 20;
+    }
+
+    if (settingsJson["adjust-width"] === undefined) {
+        settingsJson["adjust-width"] = true;
     }
 
     /**
@@ -132,10 +134,11 @@ function createSelectElements(settingsJson) {
         customSelectList.push(customSelect);
     }
 
-    // Adjust the size of the select elements
-    adjustSize("select-label-button", settingsJson.ms);
-    adjustSize("select-button", settingsJson.ms);
-
+    if (settingsJson["adjust-width"] === true) {
+        // Adjust the size of the select elements
+        adjustSize("select-label-button", settingsJson.ms);
+        adjustSize("select-button", settingsJson.ms);
+    }
 }
 
 /**
