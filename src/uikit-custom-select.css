@@ -25,6 +25,10 @@
     border-style: solid;
 }
 
+.select-button:focus {
+    outline: -webkit-focus-ring-color auto 1px;
+}
+
 /*The label button*/
 .select-label-button {
     background-color: #b2b2b2;

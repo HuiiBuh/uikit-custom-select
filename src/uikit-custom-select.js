@@ -191,7 +191,6 @@ class customSelectElement {
             "uk-flex uk-flex-middle uk-flex-between");
         selectButton.setAttribute("tabindex", "-1");
         selectButton.setAttribute("value", this.defaultValue.value);
-        selectButton.addEventListener("click", this.toggleOptionList(this));
 
         // Add the button text
         let buttonText = document.createElement("span");
@@ -208,7 +207,8 @@ class customSelectElement {
         //Add the button either to the group or the custom select
         if (this.labelContend !== null) {
             buttonGroup.appendChild(selectButton);
-            this.rootElement.appendChild(buttonGroup)
+            this.rootElement.appendChild(buttonGroup);
+            selectButton.addEventListener("click", this.toggleOptionList(this));
         } else {
             selectButton.setAttribute("tabindex", "0");
             selectButton.addEventListener("keypress", this.toggleOptionList(this));
@@ -361,6 +361,11 @@ class customSelectElement {
 
                 // If the event is an enter and target of the enter is the button group let the button group handler handle things
                 if (evt.target === self.rootElement.getElementsByClassName("uk-button-group")[0] && evt.code === "Enter") {
+                    return
+                }
+
+                // If the event is an enter and target of the enter is the button group let the button group handler handle things
+                if (evt.target === self.rootElement.getElementsByClassName("select-button")[0] && evt.code === "Enter" && self.labelContend === null) {
                     return
                 }
 
