@@ -211,7 +211,9 @@ class customSelectElement {
             selectButton.addEventListener("click", this.toggleOptionList(this));
         } else {
             selectButton.setAttribute("tabindex", "0");
-            selectButton.addEventListener("keypress", this.toggleOptionList(this));
+            selectButton.classList.add("focusable");
+            selectButton.addEventListener("click", this.toggleOptionList(this));
+            // selectButton.addEventListener("keypress", this.toggleOptionList(this));
             this.rootElement.appendChild(selectButton);
         }
 
@@ -262,14 +264,22 @@ class customSelectElement {
                 return
             }
 
+            console.log("1")
+
             if (self.isVisible === true) {
                 document.removeEventListener("click", self.closeFunction);
                 document.removeEventListener("keydown", self.closeFunction);
+
+                console.log("2")
 
                 self.optionCollection.classList.add("select-hide");
                 self.isVisible = false;
 
             } else {
+
+
+                console.log("3")
+
                 // Set the position of the box
                 self.optionCollection.style.left = getComputedStyle(self.rootElement).paddingLeft;
                 self.optionCollection.style.right = getComputedStyle(self.rootElement).paddingRight;

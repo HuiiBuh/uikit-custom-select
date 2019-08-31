@@ -25,7 +25,7 @@
     border-style: solid;
 }
 
-.select-button:focus {
+.focusable:focus {
     outline: -webkit-focus-ring-color auto 1px;
 }
 
