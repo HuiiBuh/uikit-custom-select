@@ -102,8 +102,8 @@ function createSelectElements(settingsJson) {
 
     if (settingsJson["adjust-width"] === true) {
         // Adjust the size of the select elements
-        adjustSize("select-label-button", settingsJson.ms);
-        adjustSize("select-button", settingsJson.ms);
+        adjustSize({"className": "select-label-button", "ms": settingsJson.ms});
+        adjustSize({"className": "select-button", "ms": settingsJson.ms});
     }
 }
 
@@ -373,12 +373,10 @@ class customSelectElement {
 
 /**
  * Adjust the size of the custom selects
- * @param className {string} Classname of the element, which should be resized
- * @param ms {int} The time the select should wait before executing the resize (to reload icons ...)
+ * @param settingsJson {json} Settings in json format
  * @returns {Promise<void>}
  */
-async function adjustSize(className, ms) {
-
+async function adjustSize(settingsJson) {
     /**
      * Sleep function
      * @param ms Duration of the sleep in ms
@@ -388,9 +386,22 @@ async function adjustSize(className, ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    if (settingsJson === undefined) {
+        settingsJson = {};
+    }
+
+    if (settingsJson.ms === undefined) {
+        settingsJson.ms = 20;
+    }
+
+    if (settingsJson.className === undefined) {
+        settingsJson.className = "select-button"
+    }
+
+
     // Await for uikit to add some styling
-    await sleep(ms);
-    let customSelectBoxes = document.getElementsByClassName(className);
+    await sleep(settingsJson.ms);
+    let customSelectBoxes = document.getElementsByClassName(settingsJson.className);
 
     // Get the largest width
     let width = 0;

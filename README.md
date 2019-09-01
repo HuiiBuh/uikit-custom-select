@@ -61,7 +61,7 @@ document.getElementById("custom-select").addEventListener("change", evt => {
 If you want to change the width of the custom selects after their initialisation you can call the `adjustSize` function with two parameters. The default parameters are the parameters in the example below.
 
 The `ms` parameter tells the function how long it is supposed to wait until it tries to resize the element.  
-The `className` parameter lets you if the select button (`select-button`), or the label button (`select-button-label`) should be resized.  
+The `className` parameter lets you if the select button (`select-button`), or the label button (`select-label-button`) should be resized.  
 
 ```JavaScript
 adjustSize({
