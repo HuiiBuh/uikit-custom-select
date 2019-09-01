@@ -23,15 +23,6 @@ function createSelectElements(settingsJson) {
     }
 
     /**
-     * Sleep function
-     * @param ms Duration of the sleep in ms
-     * @returns {Promise<*>}
-     */
-    async function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    /**
      * Get the default value and default value text of the select element
      * @param {object} selectElement
      * @returns {json} json[value] json[valueText]
@@ -89,31 +80,6 @@ function createSelectElements(settingsJson) {
             labelText = labelElement.innerText;
         }
         return labelText;
-    }
-
-    /**
-     * Adjust the size of the custom selects
-     * @param className {string} Classname of the element, which should be resized
-     * @param ms {int} The time the select should wait before executing the resize (to reload icons ...)
-     * @returns {Promise<void>}
-     */
-    async function adjustSize(className, ms) {
-        // Await for uikit to add some styling
-        await sleep(ms);
-        let customSelectBoxes = document.getElementsByClassName(className);
-
-        // Get the largest width
-        let width = 0;
-        for (let i = 0; i < customSelectBoxes.length; ++i) {
-            if (customSelectBoxes[i].offsetWidth > width) {
-                width = customSelectBoxes[i].offsetWidth;
-            }
-        }
-
-        // Set the largest width for every element
-        for (let i = 0; i < customSelectBoxes.length; ++i) {
-            customSelectBoxes[i].style.minWidth = width + "px";
-        }
     }
 
     // Get all selects which are in a custom-select div
@@ -264,21 +230,14 @@ class customSelectElement {
                 return
             }
 
-            console.log("1")
-
             if (self.isVisible === true) {
                 document.removeEventListener("click", self.closeFunction);
                 document.removeEventListener("keydown", self.closeFunction);
-
-                console.log("2")
 
                 self.optionCollection.classList.add("select-hide");
                 self.isVisible = false;
 
             } else {
-
-
-                console.log("3")
 
                 // Set the position of the box
                 self.optionCollection.style.left = getComputedStyle(self.rootElement).paddingLeft;
@@ -289,8 +248,10 @@ class customSelectElement {
                     self.eventTimeStamp = evt.timeStamp;
                 }
 
-                let paddingBottom = getComputedStyle(self.rootElement).paddingBottom.replace(/[g-x]/g, "");
-                self.optionCollection.style.top = self.rootElement.getBoundingClientRect().height - paddingBottom + "px";
+                let paddingTop = parseInt(getComputedStyle(self.rootElement).paddingTop.replace(/[g-x]/g, ""));
+                let buttonGroupHeight = self.rootElement.getElementsByClassName("uk-button-group")[0].getBoundingClientRect().height;
+
+                self.optionCollection.style.top = buttonGroupHeight + paddingTop + "px";
 
                 self.optionCollection.classList.remove("select-hide");
                 self.isVisible = true;
@@ -407,5 +368,40 @@ class customSelectElement {
             }
         }
         return returnValueText;
+    }
+}
+
+/**
+ * Adjust the size of the custom selects
+ * @param className {string} Classname of the element, which should be resized
+ * @param ms {int} The time the select should wait before executing the resize (to reload icons ...)
+ * @returns {Promise<void>}
+ */
+async function adjustSize(className, ms) {
+
+    /**
+     * Sleep function
+     * @param ms Duration of the sleep in ms
+     * @returns {Promise<*>}
+     */
+    async function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Await for uikit to add some styling
+    await sleep(ms);
+    let customSelectBoxes = document.getElementsByClassName(className);
+
+    // Get the largest width
+    let width = 0;
+    for (let i = 0; i < customSelectBoxes.length; ++i) {
+        if (customSelectBoxes[i].offsetWidth > width) {
+            width = customSelectBoxes[i].offsetWidth;
+        }
+    }
+
+    // Set the largest width for every element
+    for (let i = 0; i < customSelectBoxes.length; ++i) {
+        customSelectBoxes[i].style.minWidth = width + "px";
     }
 }
