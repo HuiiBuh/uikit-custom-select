@@ -84,7 +84,12 @@
     background-color: #f5f5f5;
 }
 
-/* Emulates a focus */
-.focus {
-    outline: -webkit-focus-ring-color auto 1px;
+/* Add the UIkit focus to the select */
+.custom-select .uk-button-group:focus {
+    outline: #1e87f0 auto 1px;
+}
+
+/* Add the UIkit focus to the option element */
+.select-items div:focus {
+    outline: #1e87f0 auto 1px;
 }
