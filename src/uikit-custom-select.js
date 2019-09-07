@@ -129,6 +129,7 @@ class customSelectElement {
         this.two = two;
         this.optionCollection = null;
         this.closeFunction = this.closeSelect(this);
+        this.changeFocus = this.changeFocus(this);
     }
 
     /**
@@ -233,12 +234,12 @@ class customSelectElement {
             if (self.isVisible === true) {
                 document.removeEventListener("click", self.closeFunction);
                 document.removeEventListener("keydown", self.closeFunction);
+                document.addEventListener("keydown", self.changeFocus);
 
                 self.optionCollection.classList.add("select-hide");
                 self.isVisible = false;
 
             } else {
-
                 // Set the position of the box
                 self.optionCollection.style.left = getComputedStyle(self.rootElement).paddingLeft;
                 self.optionCollection.style.right = getComputedStyle(self.rootElement).paddingRight;
@@ -258,9 +259,59 @@ class customSelectElement {
 
                 document.addEventListener("click", self.closeFunction);
                 document.addEventListener("keydown", self.closeFunction);
+                document.addEventListener("keydown", self.changeFocus);
             }
         }
     }
+
+
+    /**
+     * Moves the focus up and down with the arrow keys
+     * @param self {this} object of the customSelectElement
+     * @returns {Function} The function that will be executed if the event is fired
+     */
+    changeFocus(self) {
+        return function (evt) {
+
+            if (evt.code === "ArrowDown" || evt.code === "ArrowUp") {
+                
+                // Get the element with the current focus
+                let currentFocus = document.activeElement;
+                // List of all elements that can be focused
+                let focusableElementList = self.rootElement.querySelectorAll('[tabindex="0"]');
+                let elementList = [];
+
+                // Select only elements that are visible
+                for (let i = 0; i < focusableElementList.length; ++i) {
+                    if (!(focusableElementList[i].style.display === "none"))
+                        elementList.push(focusableElementList[i]);
+                }
+
+                // Get the index of the current element in the list
+                let index = 0;
+                for (let i = 0; i < elementList.length; ++i) {
+                    if (currentFocus === elementList[i]) {
+                        index = i;
+                    }
+                }
+
+                if (evt.code === "ArrowDown") {
+                    if (index >= elementList.length - 1) {
+                        // Bottom
+                    } else {
+                        elementList[index + 1].focus();
+                    }
+                } else if (evt.code === "ArrowUp") {
+                    if (index === 0) {
+                        // Top
+                    } else {
+                        elementList[index - 1].focus();
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Update the select value
@@ -370,6 +421,7 @@ class customSelectElement {
         return returnValueText;
     }
 }
+
 
 /**
  * Adjust the size of the custom selects
