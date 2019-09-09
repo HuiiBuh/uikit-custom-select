@@ -39,14 +39,14 @@
 
 /*Label button is not supposed to change states */
 .select-label-button:active, .select-label-button:hover, .select-label-button:focus {
-    background-color: #b2b2b2;
+    background-color: #ebebeb;
     border-color: #b2b2b2;
     color: white;
 }
 
 /* Special background color for the selected option*/
 .custom-select .select-items div[selected] {
-    background-color: #ececec !important
+    background-color: #ebebeb !important
 }
 
 /* style the items (options), including the selected item: */
@@ -81,7 +81,7 @@
 
 /* Hover for the select dropdown icon*/
 .select-items div:hover {
-    background-color: #f5f5f5;
+    background-color: #ebebeb !important;
 }
 
 /* Add the UIkit focus to the select */
