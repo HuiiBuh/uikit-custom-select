@@ -39,7 +39,7 @@
 
 /*Label button is not supposed to change states */
 .select-label-button:active, .select-label-button:hover, .select-label-button:focus {
-    background-color: #ebebeb;
+    background-color: #b2b2b2;
     border-color: #b2b2b2;
     color: white;
 }
